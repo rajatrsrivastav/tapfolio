@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { profile } from "@/content/profile";
 import { CardBack, CardFace } from "@/components/card";
 import { FlipButton } from "@/components/flip-button";
@@ -79,12 +78,6 @@ export async function Finale({ share }: { share: { url: string; title: string; t
                 </a>
               ))}
               <CopyLinkButton share={share} />
-              <Link
-                href="/qr"
-                className="inline-flex min-h-11 items-center font-medium text-field underline-offset-4 hover:underline"
-              >
-                Print-ready QR code
-              </Link>
             </div>
           </div>
         </div>
