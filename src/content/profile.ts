@@ -12,7 +12,6 @@ export type LinkKind =
   | "linkedin"
   | "portfolio"
   | "x"
-  | "leetcode"
   | "telegram"
   | "email";
 
@@ -52,11 +51,21 @@ export type Project = {
   image: { src: string; alt: string; width: number; height: number } | null;
 };
 
-export type StackLayer = {
-  /** The physical layer of the card this skill group is drawn on. */
-  layer: "face" | "inlay" | "core" | "back";
+export type CardLayer = "face" | "inlay" | "core" | "back";
+
+export type StackGroup = {
   label: string;
   items: string[];
+};
+
+/** A way to stay in touch, drawn on one physical layer of the card. */
+export type Channel = {
+  kind: "linkedin" | "x" | "github" | "portfolio";
+  layer: CardLayer;
+  /** What the visitor does there, e.g. "Connect". */
+  action: string;
+  /** The address as shown, e.g. "@rajatrsrivastav". */
+  detail: string;
 };
 
 export const profile = {
@@ -78,14 +87,38 @@ export const profile = {
   },
 
   /** The line above the card in the opening shot. */
-  tagline: "One tap. Full stack.",
+  tagline: "One tap. Stay connected.",
 
   /** Shown under the name and used as the vCard job title. */
   headline: "Full-stack engineer building cloud-native infrastructure",
   role: "Full-stack engineer",
 
+  /** Plain language: written for anyone who taps the card, not only engineers. */
   intro:
-    "I write Go for Kuadrant’s MCP Gateway, an Envoy-based gateway for Model Context Protocol traffic, and ship full-stack products in TypeScript. Before that I built AWS infrastructure and payment systems as an intern at Safcurl Technologies.",
+    "I’m a software engineer who builds the parts of a product you don’t see: the servers, cloud setup and payment systems that keep an app running. I study at IIT Guwahati and Newton School of Technology, and I contribute to open-source software.",
+
+  /** What he does, in three plain lines, each with one real example. */
+  pillars: [
+    {
+      title: "Build products end to end",
+      body: "From the screen you tap to the database behind it. Apna Hostel, for example, lets students pay hostel fees online, in parts, and get a receipt.",
+      link: { label: "See Apna Hostel", href: "https://apna-hostel-zeta.vercel.app" },
+    },
+    {
+      title: "Keep them running in the cloud",
+      body: "As an intern at Safcurl Technologies I set up AWS servers, a gateway that keeps each customer’s data separate, and the payment hooks behind billing.",
+      link: { label: "Completion letter", href: "https://drive.google.com/file/d/1jmB4c72-UxUmNKrKPyqVNMARUCFynWv2/view?usp=sharing" },
+    },
+    {
+      title: "Contribute to open source",
+      // {merged} is filled in from upstream.pulls, so the count never goes stale.
+      body: "{merged} of my changes have been accepted into Kuadrant MCP Gateway, open-source software that connects AI assistants to the tools they use.",
+      link: {
+        label: "See my contributions",
+        href: "https://github.com/Kuadrant/mcp-gateway/pulls?q=is%3Apr+author%3Arajatrsrivastav+is%3Amerged",
+      },
+    },
+  ],
 
   location: "Mumbai, India",
 
@@ -95,6 +128,7 @@ export const profile = {
    */
   availability: "Open to platform, backend and Web3 roles",
   availabilityDetail: "Internship or full-time, based in Mumbai",
+  lookingFor: "Internships and full-time roles in backend, platform and Web3 engineering",
 
   email: "rajatrsrivastav810@gmail.com",
 
@@ -104,15 +138,26 @@ export const profile = {
    * (e.g. "+91 98765 43210") in the hosting provider's environment variables.
    */
 
+  /** In priority order: LinkedIn and X are the main ways to stay in touch. */
   links: [
-    { kind: "github", label: "GitHub", href: "https://github.com/rajatrsrivastav" },
     { kind: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/rajatrsrivastav/" },
-    { kind: "portfolio", label: "Portfolio", href: "https://rajatsrivastav.dev" },
     { kind: "x", label: "X", href: "https://x.com/rajatrsrivastav" },
-    { kind: "leetcode", label: "LeetCode", href: "https://leetcode.com/u/rajatrsrivastav/" },
+    { kind: "github", label: "GitHub", href: "https://github.com/rajatrsrivastav" },
+    { kind: "portfolio", label: "Portfolio", href: "https://rajatsrivastav.dev" },
     // TODO: add a Telegram link (https://t.me/<handle>) if you want one shown.
     { kind: "telegram", label: "Telegram", href: null },
   ] satisfies ProfileLink[],
+
+  /**
+   * The exploded view of the card: each physical layer opens one channel,
+   * top layer first. Links come from `links` above.
+   */
+  channels: [
+    { kind: "linkedin", layer: "face", action: "Connect", detail: "in/rajatrsrivastav" },
+    { kind: "x", layer: "inlay", action: "Follow", detail: "@rajatrsrivastav" },
+    { kind: "github", layer: "core", action: "Read the code", detail: "rajatrsrivastav" },
+    { kind: "portfolio", layer: "back", action: "Visit", detail: "rajatsrivastav.dev" },
+  ] satisfies Channel[],
 
   /**
    * Ordered by priority: the first resume whose file exists becomes the main
@@ -239,22 +284,13 @@ export const profile = {
     { degree: "B.S., Artificial Intelligence & Machine Learning", school: "Indian Institute of Technology Guwahati", period: "2024 – 2028" },
   ],
 
-  /**
-   * The exploded view of the card: each physical layer carries one layer of
-   * the stack. Groups come from the skills section of the resume.
-   */
+  /** Shown in the background section. Groups come from the resume's skills. */
   stack: [
-    { layer: "face", label: "Interface", items: ["Next.js", "React", "TypeScript", "Tailwind CSS"] },
-    { layer: "inlay", label: "Services", items: ["Go", "Node.js", "Express", "Nginx"] },
-    { layer: "core", label: "Platform", items: ["Kubernetes", "Docker", "Terraform", "AWS", "GitHub Actions"] },
-    { layer: "back", label: "Data", items: ["PostgreSQL", "MongoDB", "MySQL", "Prisma"] },
-  ] satisfies StackLayer[],
-
-  skills: [
-    { area: "Languages", items: ["Go", "TypeScript", "Python", "SQL", "Bash"] },
-    { area: "Infrastructure", items: ["Kubernetes", "Docker", "Terraform", "AWS", "GitHub Actions", "Nginx"] },
-    { area: "Product", items: ["Next.js", "React", "Node.js", "PostgreSQL", "MongoDB"] },
-  ],
+    { label: "Interface", items: ["Next.js", "React", "TypeScript", "Tailwind CSS"] },
+    { label: "Services", items: ["Go", "Node.js", "Express", "Nginx"] },
+    { label: "Platform", items: ["Kubernetes", "Docker", "Terraform", "AWS", "GitHub Actions"] },
+    { label: "Data", items: ["PostgreSQL", "MongoDB", "MySQL", "Prisma"] },
+  ] satisfies StackGroup[],
 
   /** Shown until `showUntil`, then hidden automatically. Set to `null` to remove. */
   event: {

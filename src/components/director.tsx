@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 
-type Track = { el: HTMLElement; kind: "scene" | "reveal"; current: number; target: number };
+type Live = { el: HTMLElement; from: number; to: number };
+type Track = { el: HTMLElement; kind: "scene" | "reveal"; current: number; target: number; live: Live[] };
 
 const SMOOTHING = 0.12; // share of the remaining distance covered each frame
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -13,6 +14,10 @@ const clamp = (value: number) => Math.min(1, Math.max(0, value));
  * gets --v (how far it has risen into view). Values ease towards their
  * targets, which gives the film its weight without hijacking the scroll.
  * The pointer, or the phone's tilt on Android, sets --mx and --my.
+ *
+ * Links that only appear for part of a scene carry `data-live="from to"`
+ * (scene progress). Outside that range they are made inert, so a link that
+ * has faded out can't be tapped or reached with the keyboard.
  *
  * It does nothing unless the head script chose full motion.
  */
@@ -27,12 +32,17 @@ export function Director() {
         kind: "scene" as const,
         current: 0,
         target: 0,
+        live: Array.from(el.querySelectorAll<HTMLElement>("[data-live]"), (link) => {
+          const [from, to] = (link.dataset.live ?? "0 1").split(" ").map(Number);
+          return { el: link, from, to };
+        }),
       })),
       ...Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"), (el) => ({
         el,
         kind: "reveal" as const,
         current: 0,
         target: 0,
+        live: [],
       })),
     ];
 
@@ -67,6 +77,13 @@ export function Director() {
           track.current = track.target;
         }
         track.el.style.setProperty(track.kind === "scene" ? "--p" : "--v", track.current.toFixed(4));
+        for (const link of track.live) {
+          const on = track.current >= link.from && track.current <= link.to;
+          if (on !== !link.el.inert) {
+            link.el.inert = !on;
+            link.el.toggleAttribute("data-on", on);
+          }
+        }
       }
 
       const dx = pointerX - tiltX;

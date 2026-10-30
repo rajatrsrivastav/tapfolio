@@ -1,80 +1,116 @@
+import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
-import { profile } from "@/content/profile";
+import { profile, type CardLayer, type Channel } from "@/content/profile";
+import { LinkIcon } from "@/components/icons";
+import { publicFileExists } from "@/lib/site";
 
 const z = (value: number) => ({ "--z": value }) as CSSProperties;
 
-/** The engraved / glowing antenna: concentric loops wrapped around the chip. */
+/**
+ * The NFC antenna: concentric loops around the chip, drawn for a landscape
+ * ID-1 card (85.6 × 54 mm). Engraved faintly on the face, lit on the inlay.
+ */
 function Coil({ className, stroke, chip = true }: { className?: string; stroke: string; chip?: boolean }) {
   return (
-    <svg viewBox="0 0 54 86" className={className} fill="none" aria-hidden preserveAspectRatio="none">
+    <svg viewBox="0 0 86 54" className={className} fill="none" aria-hidden preserveAspectRatio="none">
       {[0, 1, 2, 3, 4].map((i) => (
         <rect
           key={i}
           x={5 + i * 2.2}
-          y={7 + i * 2.2}
-          width={44 - i * 4.4}
-          height={72 - i * 4.4}
-          rx={4 - i * 0.5}
+          y={5 + i * 2.2}
+          width={76 - i * 4.4}
+          height={44 - i * 4.4}
+          rx={3.4 - i * 0.4}
           stroke={stroke}
-          strokeWidth={0.32}
+          strokeWidth={0.3}
         />
       ))}
       {chip && (
         <>
-          <rect x="21" y="36" width="12" height="9" rx="1.4" fill={stroke} fillOpacity={0.9} />
-          <path d="M33 40.5h6.2M21 40.5h-6.2" stroke={stroke} strokeWidth={0.32} />
+          <rect x="62" y="23.5" width="7" height="7" rx="1" fill={stroke} fillOpacity={0.9} />
+          <path d="M69 27h5.4M62 27h-4.6" stroke={stroke} strokeWidth={0.3} />
         </>
       )}
     </svg>
   );
 }
 
-function Chip() {
+/** Three arcs: the card talks over NFC. */
+function NfcWaves({ className }: { className?: string }) {
   return (
-    <div
-      aria-hidden
-      className="absolute top-[40%] left-[11%] h-[8.6%] w-[17%] rounded-[18%] bg-[linear-gradient(135deg,#e6e9f0,#aab2c3_55%,#d9dde6)] shadow-[inset_0_0_0_0.5px_rgb(80_90_115/0.45)]"
-    >
-      <span className="absolute inset-x-0 top-1/2 h-px bg-[#7d879c]/50" />
-      <span className="absolute inset-y-0 left-1/2 w-px bg-[#7d879c]/50" />
-      <span className="absolute inset-[26%] rounded-[2px] border border-[#7d879c]/40" />
-    </div>
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden>
+      <path d="M7 8.5a5 5 0 0 1 0 7" />
+      <path d="M11 6a8.5 8.5 0 0 1 0 12" />
+      <path d="M15 3.5a12 12 0 0 1 0 17" />
+    </svg>
   );
 }
 
-/** Front of the card. Portrait, like a badge held up to a phone. */
+function Mark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="4.5" stroke="currentColor" strokeOpacity={0.5} strokeWidth={1.8} />
+      <rect x="6.5" y="8" width="11" height="8" rx="2.4" stroke="currentColor" strokeWidth={1.8} />
+      <rect x="10" y="10.6" width="4" height="2.8" rx="0.8" fill="currentColor" />
+    </svg>
+  );
+}
+
+/**
+ * Front of the card: a Tapfolio developer ID. Every size is in cqw (percent
+ * of the card's width), so it scales with the card at any screen size.
+ */
 export function CardFace({ className = "", style }: { className?: string; style?: CSSProperties }) {
+  const hasPhoto = publicFileExists(profile.photo.src);
+  const handle = profile.links
+    .find((link) => link.kind === "github")
+    ?.href?.replace(/^https?:\/\/(www\.)?github\.com\//, "@");
+
   return (
     <div className={`card-layer card-face ${className}`} style={style}>
-      {/* Panel split and the accent blocks */}
-      <span aria-hidden className="absolute inset-y-0 left-[64%] w-px bg-[#8e98ae]/30" />
-      <span aria-hidden className="absolute top-[63%] right-0 left-0 h-px bg-[#8e98ae]/30" />
-      <span aria-hidden className="absolute top-[24%] right-0 left-[64%] h-[19%] bg-[linear-gradient(160deg,#c3b8ff,#9f8cff)]" />
-      <span aria-hidden className="absolute top-[43%] right-0 left-[64%] h-[9%] bg-[linear-gradient(160deg,#a9e7cc,#78cfaa)] opacity-80" />
+      <Coil className="absolute inset-0 h-full w-full opacity-[0.14]" stroke="#5b4fc7" chip={false} />
 
-      <Coil className="absolute inset-0 h-full w-full opacity-[0.16]" stroke="#3a4462" chip={false} />
-      <Chip />
+      <div aria-hidden className="relative flex h-full flex-col p-[5.5cqw]">
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-[1.4cqw] text-[#151a33]">
+            <Mark className="size-[4.6cqw] text-[#5b4fc7]" />
+            <span className="font-wide text-[3.7cqw] leading-none font-extrabold tracking-[-0.01em]">tapfolio</span>
+          </span>
+          <NfcWaves className="size-[5cqw] text-[#5b4fc7]" />
+        </div>
 
-      {/* Wordmark along the top-left edge, name along the right edge */}
-      <span
-        aria-hidden
-        className="font-wide absolute top-[6%] left-[7%] rotate-180 text-[calc(var(--card-w)*0.056)] leading-none font-extrabold tracking-[-0.01em] whitespace-nowrap text-[#1a2134] [writing-mode:vertical-rl]"
-      >
-        tapfolio
-      </span>
-      <span
-        aria-hidden
-        className="absolute right-[6%] bottom-[6%] rotate-180 text-[calc(var(--card-w)*0.034)] leading-none font-medium tracking-[0.34em] whitespace-nowrap text-[#2a3350] uppercase [writing-mode:vertical-rl]"
-        style={{ fontVariationSettings: '"wdth" 112' }}
-      >
-        {profile.name}
-      </span>
-      <span
-        aria-hidden
-        className="absolute bottom-[4.5%] left-[8%] grid size-[calc(var(--card-w)*0.075)] place-items-center rounded-[22%] border border-[#2a3350]/60 text-[calc(var(--card-w)*0.032)] font-bold text-[#2a3350]"
-      >
-        RS
-      </span>
+        <div className="mt-auto flex items-end gap-[4cqw]">
+          {hasPhoto && (
+            <Image
+              src={profile.photo.src}
+              alt=""
+              width={profile.photo.width}
+              height={profile.photo.height}
+              sizes="120px"
+              className="size-[22cqw] shrink-0 rounded-[3.4cqw] object-cover shadow-[0_0.6cqw_2cqw_rgb(40_30_120/0.25)] ring-[0.4cqw] ring-white/80"
+            />
+          )}
+          <div className="min-w-0 pb-[0.6cqw]">
+            <p className="font-wide text-[5.6cqw] leading-[0.98] font-extrabold tracking-[-0.02em] text-[#151a33]">
+              {profile.givenName}
+              <br />
+              {profile.familyName}
+            </p>
+            <p className="mt-[1.4cqw] text-[2.9cqw] leading-tight font-medium text-[#2b3156]">{profile.role}</p>
+            {handle && <p className="mt-[0.6cqw] text-[2.5cqw] leading-tight text-[#4d5480]">{handle}</p>}
+          </div>
+        </div>
+
+        <div className="mt-[4cqw] flex items-center justify-between border-t border-[#5b4fc7]/25 pt-[2.2cqw]">
+          <span
+            className="text-[1.9cqw] font-semibold tracking-[0.3em] text-[#5b4fc7] uppercase"
+            style={{ fontVariationSettings: '"wdth" 112' }}
+          >
+            Tap to open profile
+          </span>
+          <span className="text-[2.1cqw] font-medium text-[#4d5480]">{profile.siteUrl.replace(/^https?:\/\//, "")}</span>
+        </div>
+      </div>
       <span className="card-sheen" aria-hidden />
     </div>
   );
@@ -92,10 +128,22 @@ export function CardBack({
 }) {
   return (
     <div className={`card-layer card-graphite ${className}`} style={style}>
-      <Coil className="absolute inset-0 h-full w-full opacity-[0.12]" stroke="#b4a7ff" chip={false} />
+      <Coil className="absolute inset-0 h-full w-full opacity-[0.14]" stroke="#b4a7ff" chip={false} />
       {children}
       <span className="card-sheen opacity-50" aria-hidden />
     </div>
+  );
+}
+
+/** The network logo printed on a lower layer, so the exploded view shows it. */
+function LayerGlyph({ layer }: { layer: CardLayer }) {
+  const kind = profile.channels.find((channel) => channel.layer === layer)?.kind as Channel["kind"] | undefined;
+  if (!kind) return null;
+  return (
+    <LinkIcon
+      kind={kind}
+      className="absolute top-1/2 left-[38%] size-[13cqw] -translate-x-1/2 -translate-y-1/2 text-field opacity-90 drop-shadow-[0_0_2cqw_rgb(180_167_255/0.6)]"
+    />
   );
 }
 
@@ -103,17 +151,22 @@ export function CardBack({
 export function CardStack() {
   return (
     <div className="card-body">
-      <CardBack className="layer-back" style={z(-1.5)} />
-      <div className="card-layer card-core" style={z(-0.5)} />
+      <CardBack className="layer-back" style={z(-1.5)}>
+        <LayerGlyph layer="back" />
+      </CardBack>
+      <div className="card-layer card-core" style={z(-0.5)}>
+        <LayerGlyph layer="core" />
+      </div>
       <div className="card-layer card-inlay layer-inlay" style={z(0.5)}>
         <Coil className="absolute inset-0 h-full w-full" stroke="#b4a7ff" />
+        <LayerGlyph layer="inlay" />
       </div>
       <CardFace className="layer-face" style={z(1.5)} />
     </div>
   );
 }
 
-export const LAYER_Z: Record<"face" | "inlay" | "core" | "back", number> = {
+export const LAYER_Z: Record<CardLayer, number> = {
   face: 1.5,
   inlay: 0.5,
   core: -0.5,

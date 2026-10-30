@@ -1,13 +1,17 @@
 import type { CSSProperties } from "react";
 import { profile } from "@/content/profile";
 import { CardStack, LAYER_Z } from "@/components/card";
-import { LinkIcon } from "@/components/icons";
+import { ExternalIcon, LinkIcon } from "@/components/icons";
 import { visibleLinks } from "@/lib/site";
 
 const vars = (values: Record<string, string | number>) => values as CSSProperties;
 
+/** Secondary ways to reach him; LinkedIn and X live in the dock. */
 function SocialLinks() {
-  const links = [...visibleLinks(), { kind: "email" as const, label: "Email", href: `mailto:${profile.email}` }];
+  const links = [
+    ...visibleLinks().filter((link) => link.kind !== "linkedin" && link.kind !== "x"),
+    { kind: "email" as const, label: "Email", href: `mailto:${profile.email}` },
+  ];
   return (
     <ul className="flex justify-center gap-1" aria-label="Profiles and contact">
       {links.map((link) => (
@@ -27,18 +31,62 @@ function SocialLinks() {
   );
 }
 
+/** Each layer of the exploded card, labelled with the channel it opens. */
+function ChannelLabels() {
+  const links = visibleLinks();
+  const channels = profile.channels.flatMap((channel) => {
+    const link = links.find((candidate) => candidate.kind === channel.kind);
+    return link ? [{ ...channel, label: link.label, href: link.href }] : [];
+  });
+
+  return (
+    <ul aria-label="Ways to stay in touch">
+      {channels.map((channel, index) => (
+        <li
+          key={channel.kind}
+          className="hud-label"
+          style={vars({ "--z": LAYER_Z[channel.layer], "--i": index })}
+        >
+          {/* Only reachable while the layers are apart (see Director) */}
+          <a
+            href={channel.href}
+            target="_blank"
+            rel="noopener me"
+            data-live="0.33 0.59"
+            className="hud-label-inner group rounded-lg"
+          >
+            <span aria-hidden className="hud-leader" />
+            <span className="min-w-0">
+              <span className="flex items-center gap-1.5 text-field">
+                <LinkIcon kind={channel.kind} className="size-3 md:size-3.5" />
+                <span className="hud text-[9.5px] md:text-[10.5px]">{channel.label}</span>
+              </span>
+              <span className="mt-0.5 flex items-center gap-1 text-[13px] font-medium text-paper group-hover:underline md:mt-1 md:text-[15px]">
+                {channel.action}
+                <ExternalIcon className="size-3 opacity-70" />
+              </span>
+              <span className="block truncate text-[11px] text-fog md:text-[12.5px]">{channel.detail}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
  * The opening shot, scrubbed by scroll: the card is held up (who), lies down
- * and comes apart into the layers of the stack (what), then closes again and
- * fires a beam into the upstream work that follows (proof).
+ * and comes apart into its layers, each one a way to stay in touch, then
+ * closes again and fires a beam: the moment of contact, which leads into
+ * the introduction.
  */
 export function Film() {
-  const pulls = profile.upstream.pulls.length;
   return (
     <section data-scene className="stage film" aria-labelledby="hero-name">
       <div className="stage-pin film-pin">
         {/* Sky: a dawn glow behind the card that sets as the film moves on */}
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,#060a14_0%,#0b1326_55%,#0d1830_100%)]" />
+        {/* Ends on the page colour, so no seam shows when the film scrolls away */}
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,#060a14_0%,#0d1830_50%,#060a14_100%)]" />
         <div
           aria-hidden
           className="sky-dawn absolute inset-0 bg-[radial-gradient(ellipse_70%_48%_at_50%_46%,rgb(124_151_212/0.55)_0%,rgb(42_61_115/0.45)_42%,transparent_75%)]"
@@ -73,28 +121,15 @@ export function Film() {
               </div>
             </div>
 
-            {/* HUD labels for the exploded view: one per physical layer */}
+            {/* Where the beam meets the card: a glint on its far edge */}
+            <span
+              aria-hidden
+              className="beam-flare pointer-events-none absolute top-1/2 left-1/2 h-[calc(var(--card-w)*0.06)] w-[calc(var(--card-w)*0.5)] rounded-[50%] bg-[radial-gradient(closest-side,#fff,rgb(196_185_255/0.7)_40%,transparent)] mix-blend-screen"
+            />
+
+            {/* HUD labels for the exploded view: one channel per physical layer */}
             <div className="beat-layers-labels">
-              <h2 className="sr-only">The stack, layer by layer</h2>
-              <ul>
-                {profile.stack.map((layer, index) => (
-                  <li
-                    key={layer.layer}
-                    className="hud-label"
-                    style={vars({ "--z": LAYER_Z[layer.layer], "--i": index })}
-                  >
-                    <div className="hud-label-inner">
-                      <span aria-hidden className="hud-leader" />
-                      <div>
-                        <p className="hud text-[9.5px] text-field md:text-[10.5px]">{layer.label}</p>
-                        <p className="mt-0.5 text-[11.5px] leading-[1.3] text-paper/85 md:mt-1 md:text-[13.5px]">
-                          {layer.items.join(", ")}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <ChannelLabels />
             </div>
           </div>
 
@@ -126,21 +161,21 @@ export function Film() {
 
           {/* Beat two: the exploded view */}
           <div className="beat-layers beat-overlay text-center">
-            <p className="text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.01em] text-paper">
-              built in layers
-            </p>
+            <h2 className="text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.01em] text-paper">
+              every way to reach me
+            </h2>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              Each layer of the card carries a layer of the stack I work in.
+              Each layer of the card opens a channel. Tap one to stay in touch.
             </p>
           </div>
 
-          {/* Beat three: the beam, into the pull requests that follow */}
+          {/* Beat three: the beam, the moment of contact, into the introduction */}
           <div aria-hidden className="beat-beam beat-overlay text-center">
             <p className="text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.01em] text-paper">
-              merged upstream
+              nice to meet you
             </p>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              {pulls} pull requests merged into {profile.upstream.project}.
+              Here’s a little about me.
             </p>
           </div>
         </div>

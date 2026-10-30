@@ -4,8 +4,8 @@ import { Director } from "@/components/director";
 import { Film } from "@/components/film";
 import { Finale } from "@/components/finale";
 import { Intro } from "@/components/intro";
-import { About, Projects, Upstream } from "@/components/sections";
-import { CopyLinkButton, Dock } from "@/components/share-actions";
+import { Background, Introduction, Projects, WhatIDo } from "@/components/sections";
+import { Dock, ShareButton } from "@/components/share-actions";
 import { availableResumes, publicFileExists, siteUrl, visibleLinks } from "@/lib/site";
 
 function StructuredData() {
@@ -38,15 +38,16 @@ export function ProfilePage() {
   const resumes = availableResumes();
   const primary = resumes[0];
   const share = { url: siteUrl, title: `${profile.name}, ${profile.role.toLowerCase()}`, text: profile.headline };
+  const linkHref = (kind: string) => visibleLinks().find((link) => link.kind === kind)?.href ?? null;
 
   return (
     <>
       <Intro />
       <a
-        href="#upstream"
+        href="#about"
         className="sr-only z-[80] rounded-lg bg-field px-4 py-3 font-semibold text-abyss focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
-        Skip to work
+        Skip to introduction
       </a>
 
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-[linear-gradient(to_bottom,#060a14_0%,rgb(6_10_20/0.85)_55%,transparent)]">
@@ -65,7 +66,7 @@ export function ProfilePage() {
             <span className="hud text-[10.5px] text-paper/90">{profile.name}</span>
           </a>
           <div className="pointer-events-auto">
-            <CopyLinkButton share={share} />
+            <ShareButton share={share} />
           </div>
         </div>
       </header>
@@ -73,17 +74,17 @@ export function ProfilePage() {
       <span aria-hidden className="rail left-3 hidden sm:block md:left-6" />
       <span aria-hidden className="rail right-3 hidden sm:block md:right-6" />
 
-      <main>
+      <main className="overflow-x-clip">
         <Film />
-        <Upstream />
+        <Introduction />
+        <WhatIDo />
         <Projects />
-        <About />
-        <Finale />
+        <Background />
+        <Finale share={share} />
 
         <footer className="px-5 pt-10 pb-36 text-center sm:px-8">
           <p className="mx-auto max-w-[36rem] text-[12.5px] leading-relaxed text-fog">
-            Tapfolio is {profile.givenName}’s independent page, reached from an NFC card or QR code. It is not
-            affiliated with or endorsed by Devcon, the Ethereum Foundation or any employer.
+            {profile.name} · Tapfolio
           </p>
           {profile.sourceUrl && (
             <a href={profile.sourceUrl} className="mt-2 inline-block text-[12.5px] text-field underline-offset-4 hover:underline">
@@ -94,8 +95,9 @@ export function ProfilePage() {
       </main>
 
       <Dock
-        share={share}
-        resume={primary ? { href: primary.file, label: primary.id === "web3" ? "Web3 resume" : "Resume" } : null}
+        linkedin={linkHref("linkedin")}
+        x={linkHref("x")}
+        resume={primary ? { href: primary.file, label: primary.label } : null}
         contactHref="/contact.vcf"
       />
       <Director />

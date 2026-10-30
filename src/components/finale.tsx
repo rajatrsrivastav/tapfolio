@@ -3,6 +3,7 @@ import { profile } from "@/content/profile";
 import { CardBack, CardFace } from "@/components/card";
 import { FlipButton } from "@/components/flip-button";
 import { DownloadIcon } from "@/components/icons";
+import { CopyLinkButton } from "@/components/share-actions";
 import { cardQrSvg } from "@/lib/qr";
 import { availableResumes, cardUrl } from "@/lib/site";
 
@@ -10,7 +11,7 @@ import { availableResumes, cardUrl } from "@/lib/site";
  * The closing shot: the card rises again and turns over. Its back carries the
  * QR code, so a visitor can hold up their phone and pass the page on.
  */
-export async function Finale() {
+export async function Finale({ share }: { share: { url: string; title: string; text: string } }) {
   const svg = await cardQrSvg();
   const shortUrl = cardUrl.replace(/^https?:\/\//, "");
   const resumes = availableResumes();
@@ -39,17 +40,23 @@ export async function Finale() {
                 <div className="card-body">
                   <CardFace />
                   <CardBack className="card-back">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-[6%] p-[10%]">
-                      <p className="hud text-[calc(var(--card-w)*0.036)] text-paper/80">Scan to open</p>
+                    <div className="absolute inset-0 flex items-center gap-[5cqw] p-[6cqw]">
+                      <div className="flex min-w-0 flex-1 flex-col self-stretch">
+                        <p className="font-wide text-[3.7cqw] leading-none font-extrabold text-paper">tapfolio</p>
+                        <p className="mt-auto text-[1.9cqw] font-semibold tracking-[0.3em] text-field uppercase">
+                          Scan or tap
+                        </p>
+                        <p className="mt-[1.4cqw] text-[4.4cqw] leading-[1.05] font-light text-paper">
+                          {profile.givenName}’s profile, resume and contact
+                        </p>
+                        <p className="mt-[2cqw] text-[2.4cqw] font-medium break-all text-fog">{shortUrl}</p>
+                      </div>
                       <div
                         role="img"
                         aria-label={`QR code that opens ${cardUrl}`}
-                        className="aspect-square w-[82%] overflow-hidden rounded-[10%] bg-white p-[3%] [&_svg]:size-full"
+                        className="aspect-square h-full shrink-0 overflow-hidden rounded-[2.4cqw] bg-white p-[1cqw] [&_svg]:size-full"
                         dangerouslySetInnerHTML={{ __html: svg }}
                       />
-                      <p className="text-center text-[calc(var(--card-w)*0.043)] leading-tight font-medium break-all text-paper">
-                        {shortUrl}
-                      </p>
                     </div>
                   </CardBack>
                 </div>
@@ -71,6 +78,7 @@ export async function Finale() {
                   Download {resume.label.toLowerCase()}
                 </a>
               ))}
+              <CopyLinkButton share={share} />
               <Link
                 href="/qr"
                 className="inline-flex min-h-11 items-center font-medium text-field underline-offset-4 hover:underline"

@@ -263,11 +263,13 @@
   overflow: hidden;
 }
 
-/* The card: portrait ID-1 proportions (54 × 85.6 mm). */
+/* The card: landscape ID-1 proportions (85.6 × 54 mm), like a badge. It is
+   a size container, so the face lays out in cqw and scales with the card. */
 .card-frame {
   width: var(--card-w);
-  aspect-ratio: 54 / 85.6;
+  aspect-ratio: 85.6 / 54;
   perspective: 1600px;
+  container-type: inline-size;
 }
 
 .card-body,
@@ -281,20 +283,22 @@
 .card-layer {
   position: absolute;
   inset: 0;
-  border-radius: 6% / 3.8%;
+  border-radius: 3.7% / 5.9%;
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
 
+/* Lavender pearl: the Tapfolio accent, washed into the card stock. */
 .card-face {
   background:
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 3px),
-    linear-gradient(162deg, #fafbfd 0%, #e3e7ef 42%, #c7cddb 100%);
+    radial-gradient(ellipse 70% 90% at 100% 0%, rgb(180 167 255 / 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 80% at 0% 100%, rgb(125 219 178 / 0.18), transparent 70%),
+    linear-gradient(150deg, #fbfaff 0%, #eeebff 50%, #ddd8ff 100%);
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.7),
-    inset 0 -1px 0 1px rgb(120 130 160 / 0.25);
+    inset 0 0 0 1px rgb(255 255 255 / 0.75),
+    inset 0 -1px 0 1px rgb(91 79 199 / 0.18);
   overflow: hidden;
-  color: #1a2134;
+  color: #151a33;
 }
 
 .card-sheen {
@@ -329,20 +333,19 @@
 /* --- Opening stage: hero → exploded stack → beam ------------------------ */
 
 .film {
-  --gap: 132px;
-  --iso-scale: 0.56;
-  --iso-shift: -26%;
-  --iso-y: 96px;
+  --gap: 124px;
+  --iso-scale: 0.64;
+  --iso-shift: -19%;
+  --iso-y: 84px;
+  --label-x: 0.13;
 
   /* Phases of the film, each 0 → 1, eased with smoothstep. */
   --a: clamp(0, var(--p) / 0.16, 1);
-  --b: clamp(0, (var(--p) - 0.2) / 0.28, 1);
-  --c: clamp(0, (var(--p) - 0.58) / 0.14, 1);
-  --e: clamp(0, (var(--p) - 0.86) / 0.14, 1);
+  --b: clamp(0, (var(--p) - 0.17) / 0.3, 1);
+  --c: clamp(0, (var(--p) - 0.56) / 0.18, 1);
   --as: calc(var(--a) * var(--a) * (3 - 2 * var(--a)));
   --bs: calc(var(--b) * var(--b) * (3 - 2 * var(--b)));
   --cs: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
-  --es: calc(var(--e) * var(--e) * (3 - 2 * var(--e)));
   /* How far apart the layers are: opens in phase b, closes in phase c. */
   --x: calc(var(--bs) * (1 - var(--cs)));
 }
@@ -351,21 +354,26 @@
   .film {
     --gap: 150px;
     --iso-scale: 0.8;
-    --iso-shift: -24%;
-    --iso-y: 150px;
+    --iso-shift: -20%;
+    --iso-y: 130px;
+    --label-x: 0.25;
   }
 }
 
+/* The film ends on the beam shot and holds it; the page then scrolls on with
+   the card still solid, rather than fading anything out. */
 [data-motion="full"] .film {
-  height: 430svh;
+  height: 400svh;
 }
 
+/* The landscape card simply lies back: no spin, so its face reads normally
+   in every shot. */
 .film .card-pose {
   transform:
-    translate3d(calc(var(--iso-shift) * var(--as) * (1 - var(--cs))), calc(var(--iso-y) * var(--as) - 150% * var(--es)), 0)
-    rotateX(calc(7deg + 51deg * var(--as) - var(--my) * 9deg * (1 - var(--as))))
-    rotateY(calc(-17deg * (1 - var(--as)) + var(--mx) * 16deg * (1 - var(--as))))
-    rotateZ(calc(4deg * (1 - var(--as)) - 86deg * var(--as)))
+    translate3d(calc(var(--iso-shift) * var(--as) * (1 - var(--cs))), calc(var(--iso-y) * var(--as)), 0)
+    rotateX(calc(9deg + 49deg * var(--as) - var(--my) * 9deg * (1 - var(--as))))
+    rotateY(calc(-18deg * (1 - var(--as)) + var(--mx) * 16deg * (1 - var(--as))))
+    rotateZ(calc(-3deg * (1 - var(--as)) - 2deg * var(--as)))
     scale3d(calc(1 - (1 - var(--iso-scale)) * var(--as)), calc(1 - (1 - var(--iso-scale)) * var(--as)), calc(1 - (1 - var(--iso-scale)) * var(--as)));
 }
 
@@ -382,10 +390,23 @@
   opacity: calc(1 - var(--as) * 0.85);
 }
 
+/* The beam sits behind the card and rises from its centre, so the card's
+   far half hides the base. The flare is a glint on the card's far edge,
+   exactly where the beam appears, and clear of the printed text. */
 .film .beam {
   translate: -50% var(--iso-y);
   transform: scaleY(var(--cs));
-  opacity: calc(var(--cs) * (1 - var(--es)));
+  opacity: var(--cs);
+}
+
+.film .beam-flare {
+  translate: -50% calc(-50% + var(--iso-y) - var(--card-w) * var(--iso-scale) * 0.19);
+  transform: scale(calc(0.4 + 0.6 * var(--cs)));
+  opacity: var(--cs);
+}
+
+.film .layer-face > svg {
+  opacity: calc(0.14 + 0.5 * var(--cs));
 }
 
 .film .beat-hero {
@@ -399,13 +420,23 @@
 }
 
 .film .beat-beam {
-  opacity: calc(clamp(0, (var(--c) - 0.45) / 0.55, 1) * (1 - var(--e) * 2));
+  opacity: clamp(0, (var(--c) - 0.45) / 0.55, 1);
   transform: translateY(calc((1 - var(--cs)) * 24px));
 }
 
+/* The beam rises from the card to the top of the frame, so its caption sits
+   below the card where the light never crosses it. */
+[data-motion="full"] .film .beat-beam {
+  top: auto;
+  bottom: calc(112px + env(safe-area-inset-bottom));
+}
+
+/* Labels wait at their final positions and only appear once the layers are
+   most of the way apart; they leave the moment the layers start to close,
+   so two labels never sit on top of each other. */
 .film .hud-label {
-  opacity: calc(clamp(0, (var(--b) - var(--i) * 0.16) / 0.22, 1) * (1 - var(--c) * 2.5));
-  transform: translateY(calc(var(--z) * var(--gap) * -0.85 * var(--iso-scale) * var(--x)));
+  opacity: calc(clamp(0, (var(--b) - 0.5 - var(--i) * 0.1) / 0.16, 1) * clamp(0, 1 - var(--c) * 5, 1));
+  transform: translateY(calc(var(--z) * var(--gap) * -0.85 * var(--iso-scale) * (1 - var(--cs))));
 }
 
 .film .shadow {
@@ -417,7 +448,6 @@
   --a: 1;
   --b: 1;
   --c: 0;
-  --e: 0;
 }
 
 /* Film layout. In motion mode the pin is a full-screen column: tagline,
@@ -432,7 +462,9 @@
   container-type: size;
   flex: 1;
   min-height: 0;
-  --card-w: min(56vw, 300px, calc(86cqh * 0.631));
+  /* Width of the landscape card: as wide as the screen allows, but never
+     taller than the space left between the tagline and the name. */
+  --card-w: min(86vw, 460px, calc(98cqh / 0.631));
 }
 
 .hero-copy {
@@ -455,10 +487,11 @@
   transform: translateY(var(--iso-y));
 }
 
+/* Labels start just past the right edge of the shifted, scaled stack. */
 .hud-label {
   position: absolute;
-  top: calc(50% - var(--card-w) * 0.04);
-  left: calc(50% + var(--card-w) * 0.2);
+  top: calc(50% - var(--card-w) * 0.03);
+  left: calc(50% + var(--card-w) * var(--label-x));
   right: 0;
   max-width: 15rem;
 }
@@ -470,18 +503,22 @@
   translate: 0 -50%;
 }
 
+/* Channel labels are links: tappable in the static layout, and in the film
+   only while the Director has switched them on. */
+.film [data-live] {
+  pointer-events: auto;
+}
+
+[data-motion="full"] .film [data-live]:not([data-on]) {
+  pointer-events: none;
+}
+
 .hud-leader {
   flex: none;
   width: clamp(10px, 3vw, 44px);
   height: 1px;
   margin-top: 0.55em;
   background: linear-gradient(90deg, rgb(180 167 255 / 0.1), rgb(180 167 255 / 0.8));
-}
-
-@media (min-width: 768px) {
-  .hud-label {
-    left: calc(50% + var(--card-w) * 0.42);
-  }
 }
 
 /* Static composition: everything in reading order, nothing pinned. */
@@ -520,7 +557,8 @@
 }
 
 :root:not([data-motion="full"]) .film .beat-beam,
-:root:not([data-motion="full"]) .film .beam {
+:root:not([data-motion="full"]) .film .beam,
+:root:not([data-motion="full"]) .film .beam-flare {
   display: none;
 }
 
@@ -537,12 +575,12 @@
   flex: 1;
   min-height: 0;
   width: 100%;
-  --card-w: min(64vw, 300px, calc(94cqh * 0.631));
+  --card-w: min(88vw, 480px, calc(90cqh / 0.631));
 }
 
 :root:not([data-motion="full"]) .finale-card {
   flex: none;
-  height: min(64svh, 500px);
+  height: min(44svh, 340px);
 }
 
 :root:not([data-motion="full"]) .finale-layout {

@@ -1,17 +1,9 @@
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { profile, type Project, type PullRequest } from "@/content/profile";
-import { ExternalIcon } from "@/components/icons";
-import { publicFileExists } from "@/lib/site";
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** "2026-09-07" → "7 Sep 2026", identical on every server and browser locale. */
-function formatDate(iso: string) {
-  const [year, month, day] = iso.split("-").map(Number);
-  return `${day} ${MONTHS[month - 1]} ${year}`;
-}
+import { profile, type Project } from "@/content/profile";
+import { ExternalIcon, LinkIcon } from "@/components/icons";
+import { publicFileExists, visibleLinks } from "@/lib/site";
 
 function Heading({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children?: ReactNode }) {
   return (
@@ -39,59 +31,6 @@ function ExternalLink({ href, children, className = "" }: { href: string; childr
       {children}
       <ExternalIcon />
     </a>
-  );
-}
-
-/** Split "fix(controller): decouple …" into its kind and a readable sentence. */
-function parseTitle(pull: PullRequest) {
-  const match = pull.title.match(/^(\w+)(?:\(([^)]+)\))?:\s*(.+)$/);
-  if (!match) return { kind: null, text: pull.title };
-  const [, type, scope, rest] = match;
-  return { kind: scope ? `${type}(${scope})` : type, text: rest.charAt(0).toUpperCase() + rest.slice(1) };
-}
-
-export function Upstream() {
-  const { upstream } = profile;
-  return (
-    <section id="upstream" aria-labelledby="upstream-title" className="relative px-5 pt-24 pb-28 sm:px-8 md:pt-32">
-      <Heading id="upstream" eyebrow="Open source" title={`Merged into ${upstream.project}`}>
-        {upstream.description}
-      </Heading>
-
-      <ol className="mx-auto mt-14 max-w-[52rem] border-b border-rule">
-        {upstream.pulls.map((pull) => {
-          const { kind, text } = parseTitle(pull);
-          return (
-            <li key={pull.number} data-reveal className="row-reveal border-t border-rule">
-              <a
-                href={`${upstream.repo}/pull/${pull.number}`}
-                target="_blank"
-                rel="noopener"
-                className="group grid grid-cols-[4.5rem_1fr] gap-x-3 py-4 transition-colors duration-150 hover:bg-white/[0.03] sm:grid-cols-[5.5rem_1fr_auto] sm:items-baseline sm:px-3"
-              >
-                <span className="font-semiwide text-[15px] font-semibold text-field tabular-nums">#{pull.number}</span>
-                <span className="min-w-0">
-                  <span className="block text-[15.5px] leading-snug text-paper group-hover:underline group-hover:decoration-field/60 group-hover:underline-offset-4">
-                    {text}
-                  </span>
-                  <span className="mt-1 block text-[13px] text-fog">
-                    {kind}
-                    <span className="sm:hidden">, merged {formatDate(pull.merged)}</span>
-                  </span>
-                </span>
-                <time dateTime={pull.merged} className="hidden text-[13px] whitespace-nowrap text-fog tabular-nums sm:block">
-                  {formatDate(pull.merged)}
-                </time>
-              </a>
-            </li>
-          );
-        })}
-      </ol>
-      <div className="mx-auto mt-4 flex max-w-[52rem] flex-wrap justify-center gap-x-8">
-        <ExternalLink href={upstream.allMerged}>All merged pull requests</ExternalLink>
-        <ExternalLink href={upstream.repo}>Repository</ExternalLink>
-      </div>
-    </section>
   );
 }
 
@@ -223,67 +162,180 @@ async function EventNote() {
   );
 }
 
-export function About() {
+function ConnectButtons() {
+  const links = visibleLinks();
+  const linkedin = links.find((link) => link.kind === "linkedin");
+  const x = links.find((link) => link.kind === "x");
+  return (
+    <div className="flex flex-wrap gap-2.5">
+      {linkedin && (
+        <a
+          href={linkedin.href}
+          target="_blank"
+          rel="noopener me"
+          className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-field px-5 text-[15px] font-semibold text-abyss transition-colors hover:bg-[#c4b9ff]"
+        >
+          <LinkIcon kind="linkedin" className="size-[18px]" />
+          Connect on LinkedIn
+        </a>
+      )}
+      {x && (
+        <a
+          href={x.href}
+          target="_blank"
+          rel="noopener me"
+          className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/12 bg-white/[0.05] px-5 text-[15px] font-medium text-paper transition-colors hover:bg-white/[0.1]"
+        >
+          <LinkIcon kind="x" className="size-4" />
+          Follow on X
+        </a>
+      )}
+    </div>
+  );
+}
+
+/** First thing after the film: a plain-language introduction, and a way to connect. */
+export function Introduction() {
   const hasPhoto = publicFileExists(profile.photo.src);
   return (
-    <section id="about" aria-labelledby="about-title" className="relative px-5 pt-16 pb-24 sm:px-8">
-      <Heading id="about" eyebrow="Background" title="the person behind the card" />
+    <section id="about" aria-labelledby="about-title" className="relative px-5 pt-24 pb-20 sm:px-8 md:pt-32">
+      <div className="mx-auto grid max-w-[52rem] items-center gap-10 md:grid-cols-[15rem_1fr] md:gap-14">
+        {hasPhoto && (
+          <Image
+            src={profile.photo.src}
+            alt={profile.photo.alt}
+            width={profile.photo.width}
+            height={profile.photo.height}
+            sizes="240px"
+            className="mx-auto size-44 rounded-[32px] object-cover ring-1 ring-field/40 md:size-60"
+          />
+        )}
+        <div>
+          <p className="hud text-fog">About</p>
+          <h2
+            id="about-title"
+            className="mt-3 text-[clamp(1.9rem,6.6vw,3.25rem)] leading-[1.05] font-light tracking-[-0.015em] text-paper"
+          >
+            hi, I’m {profile.givenName}
+          </h2>
+          <p className="mt-5 text-[17px] leading-relaxed font-light text-paper/90">{profile.intro}</p>
 
-      <div className="mx-auto mt-14 grid max-w-[52rem] gap-12 md:grid-cols-[13rem_1fr] md:gap-14">
-        <div className="flex flex-col items-center gap-4 md:items-start">
-          {hasPhoto && (
-            <Image
-              src={profile.photo.src}
-              alt={profile.photo.alt}
-              width={profile.photo.width}
-              height={profile.photo.height}
-              sizes="208px"
-              className="size-40 rounded-[28px] object-cover ring-1 ring-field/40 md:size-52"
-            />
-          )}
-          <p className="text-center text-[14px] text-fog md:text-left">{profile.location}</p>
+          <dl className="mt-6 grid gap-3 text-[14.5px] sm:grid-cols-[7.5rem_1fr] sm:gap-x-4">
+            <dt className="hud pt-[3px] text-[10px] text-fog">Looking for</dt>
+            <dd className="-mt-2 text-paper sm:mt-0">{profile.lookingFor}</dd>
+            <dt className="hud pt-[3px] text-[10px] text-fog">Based in</dt>
+            <dd className="-mt-2 text-paper sm:mt-0">{profile.location}</dd>
+          </dl>
+
+          <div className="mt-6 grid gap-6">
+            <EventNote />
+            <ConnectButtons />
+          </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="grid gap-10">
-          <p className="text-[17px] leading-relaxed font-light text-paper/90">{profile.intro}</p>
-          <EventNote />
+const pillarIcons = [
+  // A window with layers: a product, front to back
+  <svg key="product" viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" aria-hidden>
+    <rect x="3" y="4" width="18" height="13" rx="2.5" />
+    <path d="M3 8h18M8 20h8M12 17v3" />
+  </svg>,
+  // A cloud
+  <svg key="cloud" viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinejoin="round" aria-hidden>
+    <path d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.5 4.5 0 0 0 7 18Z" />
+  </svg>,
+  // A branch merging back: open source
+  <svg key="oss" viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" aria-hidden>
+    <circle cx="6" cy="5" r="2" />
+    <circle cx="6" cy="19" r="2" />
+    <circle cx="18" cy="9" r="2" />
+    <path d="M6 7v10M18 11c0 4-6 3-11.2 6.5" />
+  </svg>,
+];
 
-          {profile.experience.map((job) => (
-            <article key={job.company} data-reveal className="row-reveal">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h3 className="text-[17px] font-semibold text-paper">{job.company}</h3>
-                <p className="text-[13.5px] text-fog tabular-nums">{job.period}</p>
-              </div>
-              <p className="mt-0.5 text-[14.5px] text-fog">
-                {job.role}, {job.place.toLowerCase()}
-              </p>
-              <ul className="mt-3 grid gap-2 text-[14.5px] leading-relaxed text-paper/85">
-                {job.points.map((point) => (
-                  <li
-                    key={point}
-                    className="relative pl-4 before:absolute before:top-[0.7em] before:left-0 before:h-px before:w-2 before:bg-field/70"
-                  >
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              {job.proof && (
-                <ExternalLink href={job.proof.href} className="mt-1">
-                  {job.proof.label}
-                </ExternalLink>
-              )}
-            </article>
+/** What he does, in plain language, each with one piece of evidence. */
+export function WhatIDo() {
+  const merged = String(profile.upstream.pulls.length);
+  return (
+    <section id="what-i-do" aria-labelledby="what-i-do-title" className="relative px-5 pt-12 pb-24 sm:px-8">
+      <Heading id="what-i-do" eyebrow="What I do" title="the short version" />
+      <ul className="mx-auto mt-14 grid max-w-[60rem] gap-4 md:grid-cols-3 md:gap-5">
+        {profile.pillars.map((pillar, index) => (
+          <li
+            key={pillar.title}
+            data-reveal
+            className="panel flex flex-col rounded-[22px] border border-white/10 bg-[linear-gradient(160deg,rgb(124_151_212/0.1),transparent_60%),#0c1428] p-6"
+          >
+            <span className="grid size-11 place-items-center rounded-xl bg-field/12 text-field">{pillarIcons[index]}</span>
+            <h3 className="font-semiwide mt-5 text-[19px] leading-snug font-bold text-paper">{pillar.title}</h3>
+            <p className="mt-2 text-[15px] leading-relaxed text-paper/80">{pillar.body.replace("{merged}", merged)}</p>
+            <ExternalLink href={pillar.link.href} className="mt-auto pt-3">
+              {pillar.link.label}
+            </ExternalLink>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Experience, education and tools: the detail behind the short version. */
+export function Background() {
+  return (
+    <section id="background" aria-labelledby="background-title" className="relative px-5 pt-16 pb-24 sm:px-8">
+      <Heading id="background" eyebrow="Background" title="experience and education" />
+
+      <div className="mx-auto mt-14 grid max-w-[44rem] gap-10">
+        {profile.experience.map((job) => (
+          <article key={job.company} data-reveal className="row-reveal">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 className="text-[17px] font-semibold text-paper">{job.company}</h3>
+              <p className="text-[13.5px] text-fog tabular-nums">{job.period}</p>
+            </div>
+            <p className="mt-0.5 text-[14.5px] text-fog">
+              {job.role}, {job.place.toLowerCase()}
+            </p>
+            <ul className="mt-3 grid gap-2 text-[14.5px] leading-relaxed text-paper/85">
+              {job.points.map((point) => (
+                <li
+                  key={point}
+                  className="relative pl-4 before:absolute before:top-[0.7em] before:left-0 before:h-px before:w-2 before:bg-field/70"
+                >
+                  {point}
+                </li>
+              ))}
+            </ul>
+            {job.proof && (
+              <ExternalLink href={job.proof.href} className="mt-1">
+                {job.proof.label}
+              </ExternalLink>
+            )}
+          </article>
+        ))}
+
+        <ul data-reveal className="row-reveal grid gap-4 border-t border-rule pt-7">
+          {profile.education.map((item) => (
+            <li key={item.school} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4">
+              <p className="text-[15px] font-medium text-paper">{item.degree}</p>
+              <p className="text-[13.5px] whitespace-nowrap text-fog tabular-nums">{item.period}</p>
+              <p className="col-span-2 mt-0.5 text-[14px] text-fog">{item.school}</p>
+            </li>
           ))}
+        </ul>
 
-          <ul data-reveal className="row-reveal grid gap-4 border-t border-rule pt-7">
-            {profile.education.map((item) => (
-              <li key={item.school} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4">
-                <p className="text-[15px] font-medium text-paper">{item.degree}</p>
-                <p className="text-[13.5px] whitespace-nowrap text-fog tabular-nums">{item.period}</p>
-                <p className="col-span-2 mt-0.5 text-[14px] text-fog">{item.school}</p>
-              </li>
+        <div data-reveal className="row-reveal border-t border-rule pt-7">
+          <h3 className="hud text-[10px] text-fog">Tools I use</h3>
+          <dl className="mt-4 grid gap-3 text-[14.5px] sm:grid-cols-[7rem_1fr] sm:gap-x-4">
+            {profile.stack.map((group) => (
+              <div key={group.label} className="contents">
+                <dt className="pt-px text-fog">{group.label}</dt>
+                <dd className="-mt-2 mb-1 text-paper/90 sm:mt-0 sm:mb-0">{group.items.join(", ")}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
       </div>
     </section>

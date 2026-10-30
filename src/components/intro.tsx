@@ -17,7 +17,7 @@ export function Intro() {
         <span>Reading</span>
         <span className="intro-brackets">
           <span>Card</span>
-          <span>Stack</span>
+          <span>Profile</span>
         </span>
       </div>
       <span className="intro-line" />
