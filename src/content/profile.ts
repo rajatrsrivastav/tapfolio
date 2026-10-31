@@ -1,5 +1,5 @@
 /**
- * Tapfolio profile data — the single file to edit.
+ * Personal profile data — the single file to edit.
  *
  * Every value below was verified against Rajat's resume, his GitHub profile
  * (github.com/rajatrsrivastav), his portfolio (rajatsrivastav.dev) or the
@@ -87,32 +87,32 @@ export const profile = {
   },
 
   /** The line above the card in the opening shot. */
-  tagline: "One tap. Stay connected.",
+  tagline: "Software engineer · Mumbai",
 
   /** Shown under the name and used as the vCard job title. */
-  headline: "Full-stack engineer building cloud-native infrastructure",
+  headline: "I build web apps, backend services and developer tools",
   role: "Full-stack engineer",
 
   /** Plain language: written for anyone who taps the card, not only engineers. */
   intro:
-    "I’m a software engineer who builds the parts of a product you don’t see: the servers, cloud setup and payment systems that keep an app running. I study at IIT Guwahati and Newton School of Technology, and I contribute to open-source software.",
+    "I’m a software engineer based in Mumbai, studying at IIT Guwahati and Newton School of Technology. My work includes hostel payments, cloud infrastructure and tools for other developers. I also contribute to Kuadrant MCP Gateway.",
 
   /** What he does, in three plain lines, each with one real example. */
   pillars: [
     {
-      title: "Build products end to end",
-      body: "From the screen you tap to the database behind it. Apna Hostel, for example, lets students pay hostel fees online, in parts, and get a receipt.",
+      title: "Web applications",
+      body: "I built Apna Hostel so students can check their dues, pay hostel fees in parts and download receipts.",
       link: { label: "See Apna Hostel", href: "https://apna-hostel-zeta.vercel.app" },
     },
     {
-      title: "Keep them running in the cloud",
-      body: "As an intern at Safcurl Technologies I set up AWS servers, a gateway that keeps each customer’s data separate, and the payment hooks behind billing.",
+      title: "Cloud infrastructure",
+      body: "At Safcurl Technologies, I worked on AWS infrastructure, authentication and payment webhooks.",
       link: { label: "Completion letter", href: "https://drive.google.com/file/d/1jmB4c72-UxUmNKrKPyqVNMARUCFynWv2/view?usp=sharing" },
     },
     {
-      title: "Contribute to open source",
+      title: "Open-source contributions",
       // {merged} is filled in from upstream.pulls, so the count never goes stale.
-      body: "{merged} of my changes have been accepted into Kuadrant MCP Gateway, open-source software that connects AI assistants to the tools they use.",
+      body: "I’ve had {merged} pull requests merged into Kuadrant MCP Gateway, covering configuration, observability, documentation and deployment.",
       link: {
         label: "See my contributions",
         href: "https://github.com/Kuadrant/mcp-gateway/pulls?q=is%3Apr+author%3Arajatrsrivastav+is%3Amerged",
@@ -174,9 +174,9 @@ export const profile = {
     },
     {
       id: "full-stack",
-      label: "Full-stack resume",
+      label: "Resume",
       file: "/resumes/rajat-srivastav-full-stack-resume.pdf",
-      downloadName: "Rajat-Srivastav-Full-Stack-Resume.pdf",
+      downloadName: "Rajat-Srivastav-Resume.pdf",
     },
   ] satisfies Resume[],
 
@@ -207,7 +207,7 @@ export const profile = {
       problem:
         "Students preparing for mentorship programs piece together past projects and mentors from dozens of repos, spreadsheets and blog posts.",
       contribution:
-        "Author and maintainer. Built a static-first pipeline: scheduled GitHub Actions fetch official program data, audit it, and open a pull request when it changes, so every data update is reviewed like code.",
+        "I built and maintain OSSGrid. GitHub Actions fetch official program data and open pull requests when it changes, so I can review updates before publishing them.",
       stack: ["Next.js 16", "TypeScript", "Tailwind CSS", "GitHub Actions", "d3-force"],
       repo: "https://github.com/rajatrsrivastav/ossgrid",
       live: "https://www.ossgrid.tech",
@@ -224,7 +224,7 @@ export const profile = {
       problem:
         "Hostel residents need to see dues, pay monthly rent in parts and get receipts, while the office needs collections it can trust.",
       contribution:
-        "Built it end to end: Google sign-in with admin approval, automated monthly rent, partial payments, printable receipts, and Cashfree payments verified through signed, idempotent webhooks.",
+        "I built the app, from Google sign-in and admin approval to monthly rent, partial payments and receipts. Cashfree webhooks verify payments and handle duplicate notifications.",
       stack: ["Next.js 16", "TypeScript", "Better Auth", "Drizzle ORM", "Neon PostgreSQL", "Cashfree"],
       repo: "https://github.com/rajatrsrivastav/apna-hostel",
       live: "https://apna-hostel-zeta.vercel.app",
@@ -241,7 +241,7 @@ export const profile = {
       problem:
         "Moving a file between a laptop and a phone usually means a cable or a detour through a cloud upload.",
       contribution:
-        "Author. Terminal and browser peers share one AES-256-GCM encrypted WebSocket protocol; the relay never sees keys or plaintext. Phones pair by QR code and nearby rooms are found over mDNS.",
+        "I built the terminal client and browser app with AES-256-GCM encryption. The relay never receives keys or readable files. Devices pair by QR code, with mDNS for finding rooms on the local network.",
       stack: ["Node.js", "WebSockets", "WebCrypto", "mDNS"],
       repo: "https://github.com/rajatrsrivastav/termrent",
       live: null,
@@ -249,11 +249,11 @@ export const profile = {
     },
     {
       name: "PeerBot",
-      summary: "Create focused AI chatbots from your own instructions and context.",
+      summary: "An app for creating and sharing chatbots with custom instructions.",
       problem:
-        "Teams want an assistant that answers only from their own material, without building a chatbot each time.",
+        "Setting up a chatbot with its own instructions shouldn’t require building a separate app.",
       contribution:
-        "Built the full-stack app: email and Google sign-in, chatbot create, update and delete flows, a public gallery, and Gemini-powered conversations.",
+        "I built sign-in, chatbot editing, a public gallery and conversations powered by Gemini.",
       stack: ["Next.js", "MongoDB", "NextAuth", "Gemini API"],
       repo: "https://github.com/rajatrsrivastav/Peer_Bot",
       live: "https://peerbot-ai.vercel.app",

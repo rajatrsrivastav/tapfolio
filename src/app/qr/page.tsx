@@ -58,7 +58,7 @@ export default async function QrPage() {
           <div className="flex flex-wrap gap-2.5">
             <a
               href="/qr.svg"
-              download="tapfolio-qr.svg"
+              download="rajat-srivastav-qr.svg"
               className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-field px-5 font-semibold text-night hover:bg-[#c4b9ff]"
             >
               <DownloadIcon />
@@ -66,7 +66,7 @@ export default async function QrPage() {
             </a>
             <a
               href="/qr.png"
-              download="tapfolio-qr.png"
+              download="rajat-srivastav-qr.png"
               className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-rule bg-panel px-5 font-medium hover:bg-[#222c41]"
             >
               <DownloadIcon />

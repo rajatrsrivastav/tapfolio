@@ -24,12 +24,12 @@ export async function Finale({ share }: { share: { url: string; title: string; t
         />
         <div className="finale-layout relative mx-auto flex h-full max-w-[1180px] flex-col items-center px-5">
           <div className="finale-copy text-center">
-            <p className="hud text-fog">Pass it on</p>
+            <p className="hud text-fog">Keep in touch</p>
             <h2
               id="finale-title"
               className="mt-3 text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.015em] text-paper"
             >
-              tap the card, or scan its back
+              let’s keep talking
             </h2>
           </div>
 
@@ -41,12 +41,12 @@ export async function Finale({ share }: { share: { url: string; title: string; t
                   <CardBack className="card-back">
                     <div className="absolute inset-0 flex items-center gap-[5cqw] p-[6cqw]">
                       <div className="flex min-w-0 flex-1 flex-col self-stretch">
-                        <p className="font-wide text-[3.7cqw] leading-none font-extrabold text-paper">tapfolio</p>
+                        <p className="font-wide text-[3.7cqw] leading-none font-extrabold text-paper">{profile.givenName}</p>
                         <p className="mt-auto text-[1.9cqw] font-semibold tracking-[0.3em] text-field uppercase">
-                          Scan or tap
+                          Scan to open
                         </p>
                         <p className="mt-[1.4cqw] text-[4.4cqw] leading-[1.05] font-light text-paper">
-                          {profile.givenName}’s profile, resume and contact
+                          My work, resume and contact
                         </p>
                         <p className="mt-[2cqw] text-[2.4cqw] font-medium break-all text-fog">{shortUrl}</p>
                       </div>

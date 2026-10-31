@@ -46,18 +46,8 @@ function NfcWaves({ className }: { className?: string }) {
   );
 }
 
-function Mark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="4.5" stroke="currentColor" strokeOpacity={0.5} strokeWidth={1.8} />
-      <rect x="6.5" y="8" width="11" height="8" rx="2.4" stroke="currentColor" strokeWidth={1.8} />
-      <rect x="10" y="10.6" width="4" height="2.8" rx="0.8" fill="currentColor" />
-    </svg>
-  );
-}
-
 /**
- * Front of the card: a Tapfolio developer ID. Every size is in cqw (percent
+ * Front of the personal NFC card. Every size is in cqw (percent
  * of the card's width), so it scales with the card at any screen size.
  */
 export function CardFace({ className = "", style }: { className?: string; style?: CSSProperties }) {
@@ -72,10 +62,7 @@ export function CardFace({ className = "", style }: { className?: string; style?
 
       <div aria-hidden className="relative flex h-full flex-col p-[5.5cqw]">
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-[1.4cqw] text-[#151a33]">
-            <Mark className="size-[4.6cqw] text-[#5b4fc7]" />
-            <span className="font-wide text-[3.7cqw] leading-none font-extrabold tracking-[-0.01em]">tapfolio</span>
-          </span>
+          <span className="text-[2.6cqw] font-medium text-[#4d5480]">{profile.location}</span>
           <NfcWaves className="size-[5cqw] text-[#5b4fc7]" />
         </div>
 
@@ -106,7 +93,7 @@ export function CardFace({ className = "", style }: { className?: string; style?
             className="text-[1.9cqw] font-semibold tracking-[0.3em] text-[#5b4fc7] uppercase"
             style={{ fontVariationSettings: '"wdth" 112' }}
           >
-            Tap to open profile
+            My work & contact
           </span>
           <span className="text-[2.1cqw] font-medium text-[#4d5480]">{profile.siteUrl.replace(/^https?:\/\//, "")}</span>
         </div>

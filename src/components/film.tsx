@@ -165,7 +165,7 @@ export function Film() {
               every way to reach me
             </h2>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              Each layer of the card opens a channel. Tap one to stay in touch.
+              Connect on LinkedIn, follow me on X, or take a look at my code.
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export function Film() {
               nice to meet you
             </p>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              Here’s a little about me.
+              Here’s what I’ve been working on.
             </p>
           </div>
         </div>

@@ -84,7 +84,7 @@ export function ProfilePage() {
 
         <footer className="px-5 pt-10 pb-36 text-center sm:px-8">
           <p className="mx-auto max-w-[36rem] text-[12.5px] leading-relaxed text-fog">
-            {profile.name} · Tapfolio
+            {profile.name}
           </p>
           {profile.sourceUrl && (
             <a href={profile.sourceUrl} className="mt-2 inline-block text-[12.5px] text-field underline-offset-4 hover:underline">

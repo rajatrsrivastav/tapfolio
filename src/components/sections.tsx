@@ -97,14 +97,20 @@ function ProjectVisual({ project }: { project: Project }) {
 }
 
 function ProjectPanel({ project, index }: { project: Project; index: number }) {
+  const hasVisual = Boolean(project.image && publicFileExists(project.image.src)) || project.name === "termrent";
+
   return (
     <article
       data-reveal
-      className="panel mx-auto grid max-w-[60rem] origin-top gap-7 md:grid-cols-[1.35fr_1fr] md:items-center md:gap-12"
+      className={`panel mx-auto grid w-full origin-top gap-7 ${
+        hasVisual ? "max-w-[60rem] md:grid-cols-[1.35fr_1fr] md:items-center md:gap-12" : "max-w-[44rem]"
+      }`}
     >
-      <div className={index % 2 === 1 ? "md:order-2" : undefined}>
-        <ProjectVisual project={project} />
-      </div>
+      {hasVisual && (
+        <div className={index % 2 === 1 ? "md:order-2" : undefined}>
+          <ProjectVisual project={project} />
+        </div>
+      )}
       <div>
         <h3 className="font-semiwide text-[24px] leading-tight font-bold text-paper">{project.name}</h3>
         <p className="mt-2 text-[16px] leading-relaxed font-light text-paper/90">{project.summary}</p>

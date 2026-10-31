@@ -4,7 +4,7 @@ export async function GET() {
   return new Response(await cardQrSvg(), {
     headers: {
       "Content-Type": "image/svg+xml",
-      "Content-Disposition": 'inline; filename="tapfolio-qr.svg"',
+      "Content-Disposition": 'inline; filename="rajat-srivastav-qr.svg"',
     },
   });
 }

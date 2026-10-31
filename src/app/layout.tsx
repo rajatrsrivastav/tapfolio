@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: title, template: `%s · ${profile.name}` },
   description: `${profile.headline}. ${profile.availability}.`,
-  applicationName: "Tapfolio",
+  applicationName: profile.name,
   authors: [{ name: profile.name, url: siteUrl }],
   alternates: { canonical: "/" },
   openGraph: {
