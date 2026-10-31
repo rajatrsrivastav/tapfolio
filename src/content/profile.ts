@@ -58,7 +58,7 @@ export type StackGroup = {
   items: string[];
 };
 
-/** A way to stay in touch, drawn on one physical layer of the card. */
+/** A way to stay in touch. */
 export type Channel = {
   kind: "linkedin" | "x" | "github" | "portfolio";
   layer: CardLayer;
@@ -86,16 +86,16 @@ export const profile = {
     height: 460,
   },
 
-  /** The line above the card in the opening shot. */
+  /** Brief context line shown above the name in the hero. */
   tagline: "Student · Mumbai",
 
   /** Shown under the name and used as the vCard job title. */
-  headline: "Learning by building apps, backend systems, cloud infrastructure and developer tools",
+  headline: "Building apps, backend systems and cloud infrastructure",
   role: "Student developer",
 
-  /** Plain language: written for anyone who taps the card, not only engineers. */
+  /** Plain-language introduction, written for any audience. */
   intro:
-    "I’m a student based in Mumbai, studying at IIT Guwahati and Newton School of Technology. I’m learning through projects, internships and open-source contributions. So far, I’ve worked on hostel payments, cloud infrastructure and Kuadrant MCP Gateway.",
+    "I study data science at Newton School of Technology and AI/ML at IIT Guwahati, based in Mumbai. Most of what I know comes from building things — a hostel fee portal, cloud infrastructure at a startup, and contributions to Kuadrant MCP Gateway.",
 
   /** What he does, in three plain lines, each with one real example. */
   pillars: [
@@ -123,9 +123,9 @@ export const profile = {
   location: "Mumbai, India",
 
   /** Current interests and opportunities as a student. */
-  availability: "Looking for opportunities to learn and contribute",
-  availabilityDetail: "Interested in backend, platform and Web3 development",
-  lookingFor: "Internships and opportunities to learn, collaborate and contribute to real projects",
+  availability: "Open to internships and collaborations",
+  availabilityDetail: "Backend, platform and Web3 development",
+  lookingFor: "Internships in backend, platform or Web3 development",
 
   email: "rajatrsrivastav810@gmail.com",
 
@@ -146,8 +146,8 @@ export const profile = {
   ] satisfies ProfileLink[],
 
   /**
-   * The exploded view of the card: each physical layer opens one channel,
-   * top layer first. Links come from `links` above.
+   * Channels for the exploded card view in the hero,
+   * ordered top to bottom. Links come from `links` above.
    */
   channels: [
     { kind: "linkedin", layer: "face", action: "Connect", detail: "in/rajatrsrivastav" },

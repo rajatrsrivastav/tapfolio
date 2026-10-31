@@ -75,7 +75,7 @@ function ChannelLabels() {
 }
 
 /**
- * The opening shot, scrubbed by scroll: the card is held up (who), lies down
+ * The opening shot, scrubbed by scroll: the card introduces who I am, lies down
  * and comes apart into its layers, each one a way to stay in touch, then
  * closes again and fires a beam: the moment of contact, which leads into
  * the introduction.
@@ -162,10 +162,10 @@ export function Film() {
           {/* Beat two: the exploded view */}
           <div className="beat-layers beat-overlay text-center">
             <h2 className="text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.01em] text-paper">
-              every way to reach me
+              ways to connect
             </h2>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              Connect on LinkedIn, follow me on X, or take a look at my code.
+              LinkedIn, X, GitHub and my portfolio — pick whichever works for you.
             </p>
           </div>
 

@@ -65,9 +65,9 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Intro: "[ RAJAT ] → [ SRIVASTAV ]" zooms through the brackets into a
-   line of light, which opens onto the scene. Plays once per visit; an inline
-   script in <head> decides before first paint, so there is never a flash.
+   Intro: the name fades in cleanly, then gives way to the profile. Plays
+   once per session; an inline script in <head> decides before first paint,
+   so there is never a flash.
    ------------------------------------------------------------------------ */
 
 .intro {
@@ -81,116 +81,48 @@
   display: grid;
   place-items: center;
   background: var(--color-abyss);
-  animation: intro-out 700ms 1.5s var(--ease-film) forwards;
+  animation: intro-out 600ms 1.6s var(--ease-film) forwards;
 }
 
 .intro-label {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.6em;
-  font-size: 13px;
-  animation: intro-label-out 450ms 0.95s var(--ease-film) forwards;
+  text-align: center;
+  padding: 0 1.5rem;
 }
 
-.intro-brackets {
-  display: grid;
-  padding: 0.85em 1.15em;
-  --c: rgb(238 241 248 / 0.9);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 9px 1.5px,
-    linear-gradient(var(--c), var(--c)) top left / 1.5px 9px,
-    linear-gradient(var(--c), var(--c)) top right / 9px 1.5px,
-    linear-gradient(var(--c), var(--c)) top right / 1.5px 9px,
-    linear-gradient(var(--c), var(--c)) bottom left / 9px 1.5px,
-    linear-gradient(var(--c), var(--c)) bottom left / 1.5px 9px,
-    linear-gradient(var(--c), var(--c)) bottom right / 9px 1.5px,
-    linear-gradient(var(--c), var(--c)) bottom right / 1.5px 9px;
-  background-repeat: no-repeat;
-  animation: intro-zoom 520ms 0.95s var(--ease-film) forwards;
-}
-
-.intro-brackets > span {
-  grid-area: 1 / 1;
+.intro-name {
   opacity: 0;
+  animation: intro-name-in 700ms 0.15s var(--ease-tap) forwards;
 }
 
-.intro-brackets > span:first-child {
-  animation: intro-word 420ms 0.12s var(--ease-tap) both;
-}
-
-.intro-brackets > span:last-child {
-  animation: intro-word 420ms 0.55s var(--ease-tap) forwards;
-}
-
-.intro-line {
-  position: absolute;
-  left: 50%;
-  top: 22%;
-  bottom: 22%;
-  width: 2px;
-  margin-left: -1px;
-  background: linear-gradient(transparent, var(--color-paper), transparent);
-  transform: scaleY(0);
+.intro-role {
   opacity: 0;
-  animation: intro-line 700ms 1.1s var(--ease-film) forwards;
+  animation: intro-role-in 600ms 0.6s var(--ease-tap) forwards;
 }
 
-@keyframes intro-word {
-  0% {
-    opacity: 0;
-    filter: blur(6px);
-  }
-  30%,
-  80% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.intro-brackets > span:last-child {
-  animation-name: intro-word-hold;
-}
-
-@keyframes intro-word-hold {
+@keyframes intro-name-in {
   from {
     opacity: 0;
-    filter: blur(6px);
+    transform: translateY(8px);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
     filter: blur(0);
   }
 }
 
-@keyframes intro-label-out {
+@keyframes intro-role-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
   to {
-    opacity: 0;
-    letter-spacing: 0.8em;
-  }
-}
-
-@keyframes intro-zoom {
-  to {
-    transform: scale(9);
-    opacity: 0;
-  }
-}
-
-@keyframes intro-line {
-  0% {
-    transform: scaleY(0);
-    opacity: 0;
-  }
-  45% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleY(1) scaleX(60);
-    opacity: 0;
+    opacity: 0.6;
+    transform: translateY(0);
   }
 }
 
@@ -211,10 +143,10 @@
   animation-delay: calc(220ms + var(--d, 0ms));
 }
 [data-intro="play"] .enter-card {
-  animation-delay: 1.45s;
+  animation-delay: 1.55s;
 }
 [data-intro="play"] .enter-fade {
-  animation-delay: calc(1.7s + var(--d, 0ms));
+  animation-delay: calc(1.8s + var(--d, 0ms));
 }
 
 @keyframes enter-card {
@@ -288,7 +220,7 @@
   backface-visibility: hidden;
 }
 
-/* Lavender pearl: the Tapfolio accent, washed into the card stock. */
+/* Lavender pearl accent. */
 .card-face {
   background:
     radial-gradient(ellipse 70% 90% at 100% 0%, rgb(180 167 255 / 0.55), transparent 70%),
@@ -405,9 +337,6 @@
   opacity: var(--cs);
 }
 
-.film .layer-face > svg {
-  opacity: calc(0.14 + 0.5 * var(--cs));
-}
 
 .film .beat-hero {
   opacity: calc(1 - var(--a) * 1.8);
@@ -609,7 +538,7 @@
     rotateZ(calc((1 - var(--gs)) * -6deg));
 }
 
-/* Tapping "Turn over" flips the card by hand on top of the scroll flip. */
+/* Tapping "Show QR code" flips the card by hand on top of the scroll flip. */
 @property --flip {
   syntax: "<angle>";
   inherits: true;

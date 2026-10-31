@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-/** Turns the finale card over by hand, on top of the scroll-driven flip. */
+/** Flips the finale card to reveal the QR code on the back. */
 export function FlipButton() {
   const [flipped, setFlipped] = useState(false);
   return (
@@ -23,7 +23,7 @@ export function FlipButton() {
       <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden>
         <path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5" />
       </svg>
-      Turn over
+      {flipped ? "Show front" : "Show QR code"}
     </button>
   );
 }

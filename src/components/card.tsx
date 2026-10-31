@@ -7,47 +7,7 @@ import { publicFileExists } from "@/lib/site";
 const z = (value: number) => ({ "--z": value }) as CSSProperties;
 
 /**
- * The NFC antenna: concentric loops around the chip, drawn for a landscape
- * ID-1 card (85.6 × 54 mm). Engraved faintly on the face, lit on the inlay.
- */
-function Coil({ className, stroke, chip = true }: { className?: string; stroke: string; chip?: boolean }) {
-  return (
-    <svg viewBox="0 0 86 54" className={className} fill="none" aria-hidden preserveAspectRatio="none">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <rect
-          key={i}
-          x={5 + i * 2.2}
-          y={5 + i * 2.2}
-          width={76 - i * 4.4}
-          height={44 - i * 4.4}
-          rx={3.4 - i * 0.4}
-          stroke={stroke}
-          strokeWidth={0.3}
-        />
-      ))}
-      {chip && (
-        <>
-          <rect x="62" y="23.5" width="7" height="7" rx="1" fill={stroke} fillOpacity={0.9} />
-          <path d="M69 27h5.4M62 27h-4.6" stroke={stroke} strokeWidth={0.3} />
-        </>
-      )}
-    </svg>
-  );
-}
-
-/** Three arcs: the card talks over NFC. */
-function NfcWaves({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden>
-      <path d="M7 8.5a5 5 0 0 1 0 7" />
-      <path d="M11 6a8.5 8.5 0 0 1 0 12" />
-      <path d="M15 3.5a12 12 0 0 1 0 17" />
-    </svg>
-  );
-}
-
-/**
- * Front of the personal NFC card. Every size is in cqw (percent
+ * Front of the personal card. Every size is in cqw (percent
  * of the card's width), so it scales with the card at any screen size.
  */
 export function CardFace({ className = "", style }: { className?: string; style?: CSSProperties }) {
@@ -58,12 +18,9 @@ export function CardFace({ className = "", style }: { className?: string; style?
 
   return (
     <div className={`card-layer card-face ${className}`} style={style}>
-      <Coil className="absolute inset-0 h-full w-full opacity-[0.14]" stroke="#5b4fc7" chip={false} />
-
       <div aria-hidden className="relative flex h-full flex-col p-[5.5cqw]">
         <div className="flex items-center justify-between">
           <span className="text-[2.6cqw] font-medium text-[#4d5480]">{profile.location}</span>
-          <NfcWaves className="size-[5cqw] text-[#5b4fc7]" />
         </div>
 
         <div className="mt-auto flex items-end gap-[4cqw]">
@@ -89,12 +46,6 @@ export function CardFace({ className = "", style }: { className?: string; style?
         </div>
 
         <div className="mt-[4cqw] flex items-center justify-between border-t border-[#5b4fc7]/25 pt-[2.2cqw]">
-          <span
-            className="text-[1.9cqw] font-semibold tracking-[0.3em] text-[#5b4fc7] uppercase"
-            style={{ fontVariationSettings: '"wdth" 112' }}
-          >
-            My work & contact
-          </span>
           <span className="text-[2.1cqw] font-medium text-[#4d5480]">{profile.siteUrl.replace(/^https?:\/\//, "")}</span>
         </div>
       </div>
@@ -115,7 +66,6 @@ export function CardBack({
 }) {
   return (
     <div className={`card-layer card-graphite ${className}`} style={style}>
-      <Coil className="absolute inset-0 h-full w-full opacity-[0.14]" stroke="#b4a7ff" chip={false} />
       {children}
       <span className="card-sheen opacity-50" aria-hidden />
     </div>
@@ -145,7 +95,6 @@ export function CardStack() {
         <LayerGlyph layer="core" />
       </div>
       <div className="card-layer card-inlay layer-inlay" style={z(0.5)}>
-        <Coil className="absolute inset-0 h-full w-full" stroke="#b4a7ff" />
         <LayerGlyph layer="inlay" />
       </div>
       <CardFace className="layer-face" style={z(1.5)} />

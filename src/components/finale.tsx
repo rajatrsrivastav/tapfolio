@@ -43,10 +43,10 @@ export async function Finale({ share }: { share: { url: string; title: string; t
                       <div className="flex min-w-0 flex-1 flex-col self-stretch">
                         <p className="font-wide text-[3.7cqw] leading-none font-extrabold text-paper">{profile.givenName}</p>
                         <p className="mt-auto text-[1.9cqw] font-semibold tracking-[0.3em] text-field uppercase">
-                          Scan to open
+                          Profile
                         </p>
                         <p className="mt-[1.4cqw] text-[4.4cqw] leading-[1.05] font-light text-paper">
-                          My work, resume and contact
+                          Work, resume and contact
                         </p>
                         <p className="mt-[2cqw] text-[2.4cqw] font-medium break-all text-fog">{shortUrl}</p>
                       </div>

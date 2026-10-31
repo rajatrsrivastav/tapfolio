@@ -77,7 +77,7 @@ export default async function QrPage() {
           <ul className="grid gap-2 text-[14.5px] leading-relaxed text-fog">
             <li>Print at least 2.5 cm wide, black on white. Keep the white border: scanners need it.</li>
             <li>Use the SVG for print shops and the PNG (1200 px) for slides or a phone wallpaper.</li>
-            <li>Write exactly this address to the NFC tag as a URL record.</li>
+            <li>Write this address to an NFC tag as a URL record if using one.</li>
           </ul>
         </div>
       </div>
