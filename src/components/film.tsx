@@ -172,10 +172,10 @@ export function Film() {
           {/* Beat three: the beam, the moment of contact, into the introduction */}
           <div aria-hidden className="beat-beam beat-overlay text-center">
             <p className="text-[clamp(1.75rem,6.4vw,3rem)] leading-[1.05] font-light tracking-[-0.01em] text-paper">
-              nice to meet you
+              what I’m working on
             </p>
             <p className="mx-auto mt-3 max-w-[22rem] text-[14px] leading-relaxed text-fog">
-              Here’s what I’ve been working on.
+              Projects, open-source contributions and experience.
             </p>
           </div>
         </div>

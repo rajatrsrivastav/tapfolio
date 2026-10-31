@@ -90,7 +90,7 @@ export const profile = {
   tagline: "Student · Mumbai",
 
   /** Shown under the name and used as the vCard job title. */
-  headline: "Learning by building web apps and developer tools",
+  headline: "Learning by building apps, backend systems, cloud infrastructure and developer tools",
   role: "Student developer",
 
   /** Plain language: written for anyone who taps the card, not only engineers. */

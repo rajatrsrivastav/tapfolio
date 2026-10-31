@@ -1,5 +1,7 @@
 "use client";
 
+import { profile } from "@/content/profile";
+
 /**
  * The opening title. Whether it plays is decided by the inline script in
  * <head> (once per visit, never with reduced motion); tapping skips it.
@@ -14,10 +16,9 @@ export function Intro() {
       }}
     >
       <div className="hud intro-label text-paper/90">
-        <span>Reading</span>
         <span className="intro-brackets">
-          <span>Card</span>
-          <span>Profile</span>
+          <span>{profile.givenName}</span>
+          <span>{profile.familyName}</span>
         </span>
       </div>
       <span className="intro-line" />

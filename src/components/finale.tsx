@@ -83,7 +83,7 @@ export async function Finale({ share }: { share: { url: string; title: string; t
         </div>
       </div>
       <p className="sr-only">
-        The card’s address is {cardUrl}. {profile.name}’s contact card and resume are in the toolbar at the bottom of the
+        Find {profile.name}’s contact details and resume in the toolbar at the bottom of the
         screen.
       </p>
     </section>
