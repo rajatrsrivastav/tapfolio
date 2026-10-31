@@ -14,6 +14,7 @@
   --color-mint: #7ddbb2;
 
   --font-sans: var(--font-mona), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --ease-tap: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-film: cubic-bezier(0.65, 0, 0.35, 1);
@@ -65,75 +66,290 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Intro: the name fades in cleanly, then gives way to the profile. Plays
-   once per session; an inline script in <head> decides before first paint,
-   so there is never a flash.
+   Intro: a loading line types what Rajat builds, then his name; the camera
+   pushes into the cursor, which lands as the edge of the hero card. Plays
+   once per browser session. data-intro on <html> is the state:
+     play    set before first paint; the server-rendered line shows
+     run     the script is typing          zoom   the camera push
+     reveal  the hand-off to the hero      done / skip   no overlay
+   If the script never takes over, the overlay fades out on its own.
    ------------------------------------------------------------------------ */
 
 .intro {
   display: none;
 }
 
-[data-intro="play"] .intro {
+:is([data-intro="play"], [data-intro="run"], [data-intro="zoom"], [data-intro="reveal"]) .intro {
   position: fixed;
   inset: 0;
   z-index: 70;
-  display: grid;
-  place-items: center;
-  background: var(--color-abyss);
-  animation: intro-out 600ms 1.6s var(--ease-film) forwards;
+  display: block;
+  overflow: hidden;
+  color: var(--color-paper);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.intro-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0 1.5rem;
+[data-intro="play"] .intro {
+  animation: intro-fallback 500ms 8s forwards;
 }
 
-.intro-name {
-  opacity: 0;
-  animation: intro-name-in 700ms 0.15s var(--ease-tap) forwards;
+[data-intro="reveal"] .intro {
+  pointer-events: none;
 }
 
-.intro-role {
-  opacity: 0;
-  animation: intro-role-in 600ms 0.6s var(--ease-tap) forwards;
-}
-
-@keyframes intro-name-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-@keyframes intro-role-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 0.6;
-    transform: translateY(0);
-  }
-}
-
-@keyframes intro-out {
+@keyframes intro-fallback {
   to {
     opacity: 0;
     visibility: hidden;
   }
 }
 
-/* Entrances for the first shot. Timed after the intro when it plays. */
+.intro-base,
+.intro-sky,
+.intro-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Their own layers, so the push only ever repaints the type above them. */
+.intro-base,
+.intro-sky {
+  will-change: opacity;
+}
+
+/* Night: near-black, with a faint haze low in the frame. */
+.intro-base {
+  background:
+    radial-gradient(ellipse 90% 42% at 50% 108%, rgb(44 74 128 / 0.34), transparent 70%),
+    linear-gradient(180deg, #03060d 0%, #060a14 58%, #08101f 100%);
+}
+
+/* The hero's own sky. It comes up during the push, so when the overlay
+   lifts there is nothing to cross-fade: only the hero's content appears. */
+.intro-sky {
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 70% 48% at 50% 46%, rgb(124 151 212 / 0.55) 0%, rgb(42 61 115 / 0.45) 42%, transparent 75%),
+    linear-gradient(180deg, #060a14 0%, #0d1830 50%, #060a14 100%);
+}
+
+.intro-stage {
+  display: grid;
+  place-items: center;
+  padding-inline: 16px;
+}
+
+.intro-line {
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+  font-size: clamp(9.5px, 2.75vw, 12.5px);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.intro-prefix {
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+  color: rgb(238 241 248 / 0.7);
+  animation: intro-prefix-in 1000ms var(--ease-tap) both;
+}
+
+@keyframes intro-prefix-in {
+  from {
+    opacity: 0;
+    letter-spacing: 1.1em;
+  }
+}
+
+/* The brackets open to each word before it is typed (the script sets --w
+   to its measured width) and close again as it is erased. */
+.intro-box {
+  --w: 2.2em;
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: content-box;
+  width: calc(var(--w) - 0.2em + 1.5px);
+  height: 2.6em;
+  padding-inline: 0.9em;
+  transition: width 460ms var(--ease-film);
+}
+
+.intro-word {
+  white-space: pre;
+  letter-spacing: 0.42em;
+  margin-right: -0.2em;
+}
+
+.intro-word::before {
+  content: attr(data-text);
+}
+
+.intro-ghost {
+  position: absolute;
+  visibility: hidden;
+}
+
+.intro-corner {
+  position: absolute;
+  width: 0.62em;
+  height: 0.62em;
+  border: 0 solid rgb(238 241 248 / 0.8);
+  animation: intro-corner-in 800ms var(--ease-tap) both;
+  animation-delay: 150ms;
+}
+
+.intro-corner[data-corner="tl"] {
+  --from: -5px -5px;
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.intro-corner[data-corner="tr"] {
+  --from: 5px -5px;
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.intro-corner[data-corner="bl"] {
+  --from: -5px 5px;
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.intro-corner[data-corner="br"] {
+  --from: 5px 5px;
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+@keyframes intro-corner-in {
+  from {
+    opacity: 0;
+    translate: var(--from);
+  }
+}
+
+.intro-caret {
+  flex: none;
+  width: 1.5px;
+  height: 1.5em;
+  background: var(--color-paper);
+  animation: intro-blink 1050ms steps(1, end) infinite;
+}
+
+.intro[data-typing] .intro-caret {
+  animation: none;
+}
+
+@keyframes intro-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* During the push the cursor flies on its own (the script positions it over
+   the real one), so it can grow without thickening. */
+.intro-flight {
+  display: none;
+  position: fixed;
+  will-change: transform;
+  background: var(--color-paper);
+  box-shadow: 0 0 10px rgb(196 185 255 / 0.7);
+}
+
+:is([data-intro="zoom"], [data-intro="reveal"]) .intro-caret {
+  visibility: hidden;
+}
+
+:is([data-intro="zoom"], [data-intro="reveal"]) .intro-flight {
+  display: block;
+}
+
+[data-intro="zoom"] .intro-sky {
+  opacity: 1;
+  transition: opacity 1000ms 150ms var(--ease-film);
+}
+
+/* Hand-off: the night is already covered by the sky, which lifts to show
+   the identical sky beneath; the cursor stays a moment as the card turns. */
+[data-intro="reveal"] .intro-base {
+  opacity: 0;
+}
+
+[data-intro="reveal"] .intro-sky {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-tap);
+}
+
+[data-intro="reveal"] .intro-flight {
+  opacity: 0;
+  transition: opacity 280ms 40ms ease-out;
+}
+
+/* Skipped: everything simply fades. */
+[data-intro="reveal"] .intro[data-skipped] {
+  opacity: 0;
+  transition: opacity 420ms var(--ease-tap);
+}
+
+[data-intro="reveal"] .intro[data-skipped] .intro-base {
+  opacity: 1;
+}
+
+/* Sits where the share button will be. */
+.intro-skip {
+  position: absolute;
+  top: 14px;
+  right: max(20px, calc((100% - 1180px) / 2 + 20px));
+  min-height: 44px;
+  padding-inline: 14px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgb(238 241 248 / 0.6);
+  transition:
+    color 150ms,
+    border-color 150ms;
+  animation: intro-fade-in 700ms 600ms both;
+}
+
+.intro-skip:hover,
+.intro-skip:focus-visible {
+  color: var(--color-paper);
+  border-color: rgb(255 255 255 / 0.3);
+}
+
+@media (min-width: 640px) {
+  .intro-skip {
+    right: max(32px, calc((100% - 1180px) / 2 + 32px));
+  }
+}
+
+:is([data-intro="zoom"], [data-intro="reveal"]) .intro-skip {
+  visibility: hidden;
+}
+
+@keyframes intro-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Entrances for the first shot. With the intro they wait for its hand-off:
+   the card turns out of the cursor, then the copy rises beneath it. */
 [data-motion="full"] .enter-card {
   animation: enter-card 1100ms var(--ease-tap) both;
   animation-delay: 60ms;
@@ -142,11 +358,22 @@
   animation: enter-fade 800ms var(--ease-tap) both;
   animation-delay: calc(220ms + var(--d, 0ms));
 }
-[data-intro="play"] .enter-card {
-  animation-delay: 1.55s;
+/* Fallback timing, should the script never take over. */
+[data-intro="play"] :is(.enter-card, .enter-fade) {
+  animation-delay: calc(8.3s + var(--d, 0ms));
 }
-[data-intro="play"] .enter-fade {
-  animation-delay: calc(1.8s + var(--d, 0ms));
+:is([data-intro="run"], [data-intro="zoom"]) :is(.enter-card, .enter-fade) {
+  animation: none;
+  opacity: 0;
+}
+:is([data-intro="reveal"], [data-intro="done"]) .enter-card {
+  animation: card-turn 1500ms cubic-bezier(0.2, 0.75, 0.15, 1) both;
+}
+:is([data-intro="reveal"], [data-intro="done"]) .enter-fade {
+  animation-delay: calc(400ms + var(--d, 0ms));
+}
+:is([data-intro="reveal"], [data-intro="done"]) .film .shadow {
+  animation: intro-fade-in 1000ms 250ms both;
 }
 
 @keyframes enter-card {
@@ -161,6 +388,27 @@
     opacity: 0;
     transform: translateY(14px);
     filter: blur(6px);
+  }
+}
+
+/* Edge-on (the pose's -18deg plus -72deg) to its pose, with light sliding
+   across the face as it turns. */
+@property --turn {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --sheen {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes card-turn {
+  from {
+    --turn: -72deg;
+    --sheen: 1.3;
   }
 }
 
@@ -195,11 +443,12 @@
   overflow: hidden;
 }
 
-/* The card: landscape ID-1 proportions (85.6 × 54 mm), like a badge. It is
-   a size container, so the face lays out in cqw and scales with the card. */
+/* The card: the physical NFC card's proportions, 80 × 50 mm (1.6 : 1, measured
+   by hand, so approximate until checked for print). It is a size container,
+   so the face lays out in cqw and scales with the card. */
 .card-frame {
   width: var(--card-w);
-  aspect-ratio: 85.6 / 54;
+  aspect-ratio: 80 / 50;
   perspective: 1600px;
   container-type: inline-size;
 }
@@ -215,7 +464,7 @@
 .card-layer {
   position: absolute;
   inset: 0;
-  border-radius: 3.7% / 5.9%;
+  border-radius: 4% / 6.4%;
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
@@ -293,8 +542,10 @@
 }
 
 /* The film ends on the beam shot and holds it; the page then scrolls on with
-   the card still solid, rather than fading anything out. */
+   the card still solid, rather than fading anything out. Until the Director
+   loads, it holds its first shot (the intro can finish before that). */
 [data-motion="full"] .film {
+  --p: 0;
   height: 400svh;
 }
 
@@ -304,7 +555,7 @@
   transform:
     translate3d(calc(var(--iso-shift) * var(--as) * (1 - var(--cs))), calc(var(--iso-y) * var(--as)), 0)
     rotateX(calc(9deg + 49deg * var(--as) - var(--my) * 9deg * (1 - var(--as))))
-    rotateY(calc(-18deg * (1 - var(--as)) + var(--mx) * 16deg * (1 - var(--as))))
+    rotateY(calc(var(--turn) - 18deg * (1 - var(--as)) + var(--mx) * 16deg * (1 - var(--as))))
     rotateZ(calc(-3deg * (1 - var(--as)) - 2deg * var(--as)))
     scale3d(calc(1 - (1 - var(--iso-scale)) * var(--as)), calc(1 - (1 - var(--iso-scale)) * var(--as)), calc(1 - (1 - var(--iso-scale)) * var(--as)));
 }
@@ -393,7 +644,7 @@
   min-height: 0;
   /* Width of the landscape card: as wide as the screen allows, but never
      taller than the space left between the tagline and the name. */
-  --card-w: min(86vw, 460px, calc(98cqh / 0.631));
+  --card-w: min(86vw, 460px, calc(98cqh / 0.625));
 }
 
 .hero-copy {
@@ -504,7 +755,7 @@
   flex: 1;
   min-height: 0;
   width: 100%;
-  --card-w: min(88vw, 480px, calc(90cqh / 0.631));
+  --card-w: min(88vw, 480px, calc(90cqh / 0.625));
 }
 
 :root:not([data-motion="full"]) .finale-card {

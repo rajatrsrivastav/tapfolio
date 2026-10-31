@@ -135,7 +135,7 @@ export function Dock({
           >
             <LinkIcon kind="linkedin" className="size-[18px] shrink-0" />
             <span className="truncate">
-              Connect<span className="max-[419px]:hidden"> on LinkedIn</span>
+              Connect<span className="max-[459px]:hidden"> on LinkedIn</span>
             </span>
           </a>
         )}
