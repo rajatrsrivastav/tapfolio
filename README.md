@@ -13,6 +13,8 @@ npm run dev
 
 Profile content is in `src/content/profile.ts`. Images and resume PDFs are in `public/`.
 
+The opening sequence plays once per browser session (open a new tab to see it again) and never with reduced motion. The words it types before the name are `loadingWords` in the same file.
+
 ## Production
 
 ```bash

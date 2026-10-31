@@ -91,6 +91,9 @@ export const profile = {
 
   /** Shown under the name and used as the vCard job title. */
   headline: "Building apps, backend systems and cloud infrastructure",
+
+  /** Typed one by one in the opening sequence before the name; taken from the headline. */
+  loadingWords: ["backends", "cloud"],
   role: "Student developer",
 
   /** Plain-language introduction, written for any audience. */

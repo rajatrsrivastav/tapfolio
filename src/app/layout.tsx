@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Mona_Sans } from "next/font/google";
+import { Geist_Mono, Mona_Sans } from "next/font/google";
 import { headScript } from "@/components/intro";
 import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/site";
@@ -10,6 +10,16 @@ const mona = Mona_Sans({
   subsets: ["latin"],
   axes: ["wdth"],
   display: "swap",
+});
+
+// Only the opening sequence uses it; a metric-adjusted sans fallback would
+// break the even character widths, so fall back to a system mono instead.
+const mono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+  adjustFontFallback: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
 const title = `${profile.name}, ${profile.role.toLowerCase()}`;
@@ -50,7 +60,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // The head script sets data-motion and data-intro before first paint.
-    <html lang="en-IN" className={mona.variable} suppressHydrationWarning>
+    <html lang="en-IN" className={`${mona.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: headScript }} />
       </head>
