@@ -87,15 +87,15 @@ export const profile = {
   },
 
   /** The line above the card in the opening shot. */
-  tagline: "Software engineer · Mumbai",
+  tagline: "Student · Mumbai",
 
   /** Shown under the name and used as the vCard job title. */
-  headline: "I build web apps, backend services and developer tools",
-  role: "Full-stack engineer",
+  headline: "Learning by building web apps and developer tools",
+  role: "Student developer",
 
   /** Plain language: written for anyone who taps the card, not only engineers. */
   intro:
-    "I’m a software engineer based in Mumbai, studying at IIT Guwahati and Newton School of Technology. My work includes hostel payments, cloud infrastructure and tools for other developers. I also contribute to Kuadrant MCP Gateway.",
+    "I’m a student based in Mumbai, studying at IIT Guwahati and Newton School of Technology. I’m learning through projects, internships and open-source contributions. So far, I’ve worked on hostel payments, cloud infrastructure and Kuadrant MCP Gateway.",
 
   /** What he does, in three plain lines, each with one real example. */
   pillars: [
@@ -122,13 +122,10 @@ export const profile = {
 
   location: "Mumbai, India",
 
-  /**
-   * GitHub and the portfolio say he is open to platform, DevOps and SRE roles,
-   * internships and full-time. "Web3" comes from the Devcon brief.
-   */
-  availability: "Open to platform, backend and Web3 roles",
-  availabilityDetail: "Internship or full-time, based in Mumbai",
-  lookingFor: "Internships and full-time roles in backend, platform and Web3 engineering",
+  /** Current interests and opportunities as a student. */
+  availability: "Looking for opportunities to learn and contribute",
+  availabilityDetail: "Interested in backend, platform and Web3 development",
+  lookingFor: "Internships and opportunities to learn, collaborate and contribute to real projects",
 
   email: "rajatrsrivastav810@gmail.com",
 
@@ -293,10 +290,7 @@ export const profile = {
   ] satisfies StackGroup[],
 
   /** Shown until `showUntil`, then hidden automatically. Set to `null` to remove. */
-  event: {
-    text: "Meeting Web3 and infrastructure teams at the Devcon career fair in Mumbai on 6 November 2026.",
-    showUntil: "2026-11-07T23:59:59+05:30",
-  } as { text: string; showUntil: string } | null,
+  event: null as { text: string; showUntil: string } | null,
 
   /** TODO: set to this repository's public GitHub URL once it is pushed. */
   sourceUrl: null as string | null,
